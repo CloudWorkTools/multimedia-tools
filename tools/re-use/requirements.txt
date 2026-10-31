@@ -1,0 +1,19 @@
+# 已在 RTX 4060 Ti / CUDA 13.3 nvcc 驗證過的版本（2026-10-31）
+torch==2.15.0
+torchaudio==2.11.1
+torchcodec==0.17.0
+numpy==1.26.4
+gradio==6.31.0
+huggingface_hub==2.4.0
+librosa==0.11.0
+soundfile
+pyyaml
+einops
+matplotlib
+pesq
+resampy
+transformers
+packaging
+setuptools
+wheel
+ninja

@@ -1,0 +1,4 @@
+{
+  "model": {"repo": "nvidia/RE-USE", "type": "model", "sha": "85575b770bcbe0da944f38d34feb390ec9e1a2b7"},
+  "space": {"repo": "nvidia/RE-USE", "type": "space", "sha": "e6ac1dc3089ae560cd2f792be194e0f200e5282d"}
+}

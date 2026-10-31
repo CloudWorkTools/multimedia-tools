@@ -1,0 +1,51 @@
+name: 追蹤 Hugging Face 上游
+
+on:
+  schedule:
+    - cron: '37 1,13 * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: upstream-sync
+  cancel-in-progress: false
+
+jobs:
+  compare:
+    if: github.repository == 'CloudWorkTools/multimedia-tools'
+    runs-on:
+      group: shared-runners
+      labels: [self-hosted, Linux, X64, shared]
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: 比對鎖定版本與上游
+        id: check
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/check_hf_upstream.py --self-test
+          python3 scripts/check_hf_upstream.py > "$RUNNER_TEMP/upstream-report.md"
+          cat "$RUNNER_TEMP/upstream-report.md" >> "$GITHUB_STEP_SUMMARY"
+      - name: 更新追蹤 issue
+        if: steps.check.outputs.drift == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          title='[追蹤] Hugging Face 上游有更新'
+          issue=$(gh issue list --state all --search "\"$title\" in:title" --limit 100 --json number,title --jq "[.[] | select(.title == \"$title\")][0].number // empty")
+          if [ -n "$issue" ]; then
+            gh issue reopen "$issue" || true
+            gh issue edit "$issue" --body-file "$RUNNER_TEMP/upstream-report.md"
+          else
+            gh issue create --title "$title" --body-file "$RUNNER_TEMP/upstream-report.md"
+          fi

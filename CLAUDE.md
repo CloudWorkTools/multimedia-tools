@@ -1,0 +1,2 @@
+- 修改或排查 `tools/re-use/setup.sh` 前先讀 `tools/re-use/BUILD.md`。
+- 文件以繁體中文撰寫，撰寫前載入 `technical-writing` skill。
